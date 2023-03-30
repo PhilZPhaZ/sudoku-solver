@@ -1,6 +1,3 @@
-
-
-
 import itertools
 class Solver:
     def __init__(self):
@@ -54,6 +51,6 @@ class Solver:
                 self.possibilities = self.find_possibilities(i, j)
         
         self.order.sort(key=lambda tup: tup[2])
-                    
+
 G = Solver()
 G.mrv()
