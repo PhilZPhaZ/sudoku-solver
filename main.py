@@ -19,7 +19,6 @@ class Solver:
         self.order = []
     
     def find_possibilities(self, i, j):
-        # sourcery skip: merge-nested-ifs, use-itertools-product
         self.number_of_possibilities = 0
         self.verified = []
 
@@ -38,17 +37,23 @@ class Solver:
         # On trouve les possibilités dans le bloc
         i0 = (i // 3) * 3
         j0 = (j // 3) * 3
-        for k in range(i0, i0 + 3):
-            for l in range(j0, j0 + 3):
-                if self.grid[k][l] == 0 and (k, l) != (i, j):
-                    if (k, l) not in self.verified:
-                        self.verified.append((k, l))
-                        self.number_of_possibilities += 1
+        for k, l in itertools.product(range(i0, i0 + 3), range(j0, j0 + 3)):
+            if (
+                self.grid[k][l] == 0
+                and (k, l) != (i, j)
+                and (k, l) not in self.verified
+            ):
+                self.verified.append((k, l))
+                self.number_of_possibilities += 1
+                
+        self.order.append((i, j, self.number_of_possibilities))
     
     def mrv(self):
         for i, j in itertools.product(range(9), range(9)):
             if self.grid[i][j] == 0:
                 self.possibilities = self.find_possibilities(i, j)
+        
+        self.order.sort(key=lambda tup: tup[2])
                    
                     
 G = Solver()
