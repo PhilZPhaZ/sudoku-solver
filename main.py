@@ -43,14 +43,50 @@ class Solver:
                 self.verified.append((k, l))
                 self.number_of_possibilities += 1
                 
-        self.order.append((i, j, self.number_of_possibilities))
+        self.order.append([i, j, self.number_of_possibilities])
     
+    # Methode permettant de creer une liste des cases à parcourir pour remplir le sudoku
     def mrv(self):
         for i, j in itertools.product(range(9), range(9)):
             if self.grid[i][j] == 0:
                 self.possibilities = self.find_possibilities(i, j)
         
         self.order.sort(key=lambda tup: tup[2])
+    
+    def find_neigboor(self, i, j):
+        self.neighboors = []
+        
+        # On trouve les cases remplies dans la ligne
+        for k in range(9):
+            if self.grid[i][k] != 0 and k != j:
+                self.neighboors.append(self.grid[i][k])
+
+        # On trouve les cases remplies dans la colonne
+        for k in range(9):
+            if self.grid[k][j] != 0 and k != i:
+                self.neighboors.append(self.grid[k][j])
+        
+        # On trouve les possibilités dans le bloc
+        i0 = (i // 3) * 3
+        j0 = (j // 3) * 3
+        for k, l in itertools.product(range(i0, i0 + 3), range(j0, j0 + 3)):
+            if (
+                self.grid[k][l] != 0
+                and (k, l) != (i, j)
+            ):
+                self.neighboors.append(self.grid[k][l])
+        
+        return self.neighboors
+    
+    # On retrie encore une fois les valeurs pour trouver la case qu'il faut remplir en premier
+    def degree(self):
+        self.mrv()
+        for idx, elem in enumerate(self.order):
+            self.number_possibilities = list(set(self.find_neigboor(elem[0], elem[1])))
+            self.order[idx][2] += len(self.number_possibilities)
+
+        self.order.sort(key=lambda tup: tup[2])
+            
 
 G = Solver()
-G.mrv()
+G.degree()
