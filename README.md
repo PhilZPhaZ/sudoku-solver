@@ -1,4 +1,4 @@
-# Python Sudoku Solver
+# PHONOS (PytHON sOlver Sudoku)
 Hi, it's an extension to solve Sudoku using backtracking algorithm in Python. WIP
 
  - [x] Core of the project
