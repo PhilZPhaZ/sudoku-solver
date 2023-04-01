@@ -1,3 +1,3 @@
-import main
+import sudoku_solver.solver as solver
 
-game = main.SudokuGrid()
+game = solver.SudokuGrid()

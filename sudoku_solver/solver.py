@@ -3,13 +3,15 @@ import sys
 import tkinter as tk
 
 sys.setrecursionlimit(100000000)
+
+
 class Solver:
     def __init__(self, grid):
         self.grid = grid
         self.val = (1, 2, 3, 4, 5, 6, 7, 8, 9)
         self.order = []
         self.idx = 0
-    
+
     def find_possibilities(self, i, j):
         self.number_of_possibilities = 0
         self.verified = []
@@ -37,25 +39,24 @@ class Solver:
             ):
                 self.verified.append((k, l))
                 self.number_of_possibilities += 1
-                
+
         self.order.append([i, j, self.number_of_possibilities])
-    
+
     # Methode permettant de creer une liste des cases à parcourir pour remplir le sudoku
     def mrv(self):
         for i, j in itertools.product(range(9), range(9)):
             if self.grid[i][j] == 0:
                 self.possibilities = self.find_possibilities(i, j)
-        
+
         self.order.sort(key=lambda tup: tup[2])
         self.order = [tuple(x[:-1]) for x in self.order]
-    
+
     # Backtracking algorithme
     def backtrack(self):
         # On récupère la case à remplir en utilisant l'ordre trié par Degree
         if len(self.order) == 0:
             return True  # Toutes les cases sont remplies, on a trouvé une solution
         i, j = self.order.pop(0)[:2]
-
 
         # On cherche les valeurs possibles pour cette case
         for val in self.val:
@@ -74,7 +75,7 @@ class Solver:
         # Si aucune valeur n'est valide, on revient en arrière
         self.order.insert(0, [i, j])
         return False
-    
+
     def is_valid(self, i, j, val):
         # On vérifie que la valeur n'est pas déjà présente dans la ligne
         if val in self.grid[i]:
@@ -91,14 +92,13 @@ class Solver:
             self.grid[k][l]
             for k, l in itertools.product(range(i0, i0 + 3), range(j0, j0 + 3))
         ]
-    
-    
+
     def solve(self):
         self.mrv()
-        
+
         if self.backtrack():
             return self.grid
-                
+
 
 class SudokuGrid(tk.Frame):
     def __init__(self, master=tk.Tk()):
@@ -107,9 +107,11 @@ class SudokuGrid(tk.Frame):
         self.create_puzzle()
         self.values = {}
         self.button_frame = tk.Frame(self.master)
-        self.resolve = tk.Button(self.button_frame, text="Resoudre", command=self.resolve)
+        self.resolve = tk.Button(
+            self.button_frame, text="Resoudre", command=self.resolve)
         self.resolve.pack(side=tk.LEFT, padx=10)
-        self.delete = tk.Button(self.button_frame, text="Reset", command=self.reset)
+        self.delete = tk.Button(
+            self.button_frame, text="Reset", command=self.reset)
         self.delete.pack(side=tk.LEFT, padx=10)
         self.button_frame.pack(pady=10)
         self.pack()
@@ -119,7 +121,7 @@ class SudokuGrid(tk.Frame):
         self.grid = []
         for x in range(9):
             self.line = []
-            
+
             for y in range(9):
                 if (x, y) in self.values:
                     self.line.append(self.values[(x, y)])
@@ -128,9 +130,9 @@ class SudokuGrid(tk.Frame):
             self.grid.append(self.line)
         self.solution = Solver(self.grid)
         self.solution = self.solution.solve()
-        
+
         self.update_cells()
-    
+
     def create_puzzle(self):
         # Add the 3 * 3 big blocks
         self.blocks = []
@@ -178,14 +180,14 @@ class SudokuGrid(tk.Frame):
                     else:
                         # Otherwise, focus goes to the next cell in the same row
                         self.cells[i][j+1].focus()
-                        
+
     def update_cells(self):
         for i, row in enumerate(self.cells):
             for j, cell in enumerate(row):
                 self.value = self.solution[i][j]
                 cell.delete(0, tk.END)
                 cell.insert(0, self.value)
-                
+
     def reset(self):
         for row in self.cells:
             for cell in row:
