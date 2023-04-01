@@ -1,5 +1,6 @@
 import itertools
 import sys
+import tkinter as tk
 
 sys.setrecursionlimit(100000000)
 class Solver:
@@ -133,6 +134,64 @@ class Solver:
         if self.backtrack():
             for line in self.grid:
                 print(line)
-        
-G = Solver()
-G.solve()
+                
+
+class SudokuGrid(tk.Frame):
+    def __init__(self, master):
+        super().__init__(master, bg='white')
+        self.master = master
+        self.create_puzzle()
+        self.values = {}
+
+    def create_puzzle(self):
+        # Add the 3 * 3 big blocks
+        self.blocks = []
+        for r in range(3):  # `r` like `row`
+            row = []
+            for c in range(3):  # `c` like `column`
+                frame = tk.Frame(self, bd=1, highlightbackground='light blue',
+                                 highlightcolor='light blue', highlightthickness=1)
+                frame.grid(row=r, column=c, sticky='nsew')
+                row.append(frame)
+            self.blocks.append(row)
+
+        # Add the 9 * 9 cells
+        self.cells = [[None] * 9 for _ in range(9)]
+        for i, j in itertools.product(range(9), range(9)):
+            # Add cell to the block
+            # Add a frame so that the cell can form a square
+            frm_cell = tk.Frame(self.blocks[i // 3][j // 3])
+            frm_cell.grid(row=(i % 3), column=(j % 3), sticky='nsew')
+            frm_cell.rowconfigure(0, minsize=50, weight=1)
+            frm_cell.columnconfigure(0, minsize=50, weight=1)
+
+            # Use an Entry widget to allow for text input
+            cell = tk.Entry(frm_cell, justify='center')
+            cell.grid(sticky='nsew')
+            cell.bind('<Return>', self.handle_keypress)
+            self.cells[i][j] = cell
+
+    def handle_keypress(self, event):
+        # When the "Return" key is pressed, focus goes to the next cell
+        current_cell = self.master.focus_get()
+        for i, row in enumerate(self.cells):
+            for j, cell in enumerate(row):
+                if cell == current_cell:
+                    if value := cell.get():
+                        self.values[(i, j)] = value
+                    else:
+                        self.values.pop((i, j), None)
+                    if i == 8 and j == 8:
+                        # If the current cell is the last cell, focus goes to the first cell
+                        self.cells[0][0].focus()
+                    elif j == 8:
+                        # If the current cell is the last cell in a row, focus goes to the first cell in the next row
+                        self.cells[i+1][0].focus()
+                    else:
+                        # Otherwise, focus goes to the next cell in the same row
+                        self.cells[i][j+1].focus()
+
+root = tk.Tk()
+grid = SudokuGrid(root)
+grid.pack()
+root.mainloop()
