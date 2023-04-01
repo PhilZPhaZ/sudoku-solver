@@ -101,13 +101,19 @@ class Solver:
                 
 
 class SudokuGrid(tk.Frame):
-    def __init__(self, master):
+    def __init__(self, master=tk.Tk()):
         super().__init__(master, bg='white')
         self.master = master
         self.create_puzzle()
         self.values = {}
-        self.resolve = tk.Button(self.master, text="Resoudre", command=self.resolve)
-        self.resolve.pack()
+        self.button_frame = tk.Frame(self.master)
+        self.resolve = tk.Button(self.button_frame, text="Resoudre", command=self.resolve)
+        self.resolve.pack(side=tk.LEFT, padx=10)
+        self.delete = tk.Button(self.button_frame, text="Reset", command=self.reset)
+        self.delete.pack(side=tk.LEFT, padx=10)
+        self.button_frame.pack(pady=10)
+        self.pack()
+        self.master.mainloop()
 
     def resolve(self):
         self.grid = []
@@ -179,8 +185,8 @@ class SudokuGrid(tk.Frame):
                 self.value = self.solution[i][j]
                 cell.delete(0, tk.END)
                 cell.insert(0, self.value)
-
-root = tk.Tk()
-grid = SudokuGrid(root)
-grid.pack()
-root.mainloop()
+                
+    def reset(self):
+        for row in self.cells:
+            for cell in row:
+                cell.delete(0, tk.END)
