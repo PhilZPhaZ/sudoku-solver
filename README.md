@@ -3,9 +3,10 @@ Hi, it's an extension to solve Sudoku using backtracking algorithm in Python. WI
 
  - [x] Core of the project
  - [x] MRV algorithm
- - [ ] Degree algorithm
- - [ ] LCV algorithm
- - [ ] Backtracking algorithm
+ - [x] Degree algorithm
+ - [x] LCV algorithm
+ - [x] Backtracking algorithm
+ - [ ] GUI
  
  ## Licence
 You can use and modify my code as you want
